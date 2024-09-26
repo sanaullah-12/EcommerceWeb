@@ -1,6 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import gameremote from "../../assets/Images/firstiemgame.png";
+import Card from "../../Utils/Card/card";
+import { SalesData } from "../../MockData/SALES_DATA";
+import Button from "../../Utils/Button/button";
 
-export default function Sales() {
+export default function Sales({ targetDate }) {
+  const calculateTimeLeft = () => {
+    const difference = new Date(targetDate) - new Date();
+    let timeLeft = {};
+
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    }
+
+    return timeLeft;
+  };
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
   return (
     <>
       <div className=" pt-24 pl-[134px]">
@@ -29,15 +58,42 @@ export default function Sales() {
               </h1>
             </div>
             <div className="flex gap-4">
-              <h1 className="text-2xl font-bold font-poppins">03</h1>
+              <h1 className="text-2xl font-bold font-poppins">
+                {timeLeft.days || 0}
+              </h1>
               <span className=" text-[#DB4444] ">:</span>
-              <h1 className="text-2xl font-bold font-poppins">12</h1>
+              <h1 className="text-2xl font-bold font-poppins">
+                {timeLeft.hours || 0}
+              </h1>
               <span className=" text-[#DB4444]">:</span>
-              <h1 className="text-2xl font-bold font-poppins ">56</h1>
-              <span className=" text-[#DB4444]">:</span>
-              <h1 className="text-2xl font-bold font-poppins">18</h1>
+              <h1 className="text-2xl font-bold font-poppins  ">
+                {timeLeft.minutes || 0}
+              </h1>
+              <span className="text-[#DB4444]">:</span>
+              <h1 className="text-2xl font-bold font-poppins">
+                {timeLeft.seconds || 0}
+              </h1>
             </div>
           </div>
+        </div>
+        <div>
+          <div className=" flex justify-between items-center pr-[135px] pt-[40px]">
+            {SalesData.map((items, i) => (
+              <Card
+                classname="w-[270px] h-[230px] bg-[#F5F5F5] rounded-[4px]"
+                image={items.image}
+                title={items.heading}
+                price={items.price}
+                star={items.stars}
+              />
+            ))}
+          </div>
+        </div>
+        <div className=" flex justify-center items-center pt-[60px] pb-10">
+          <Button
+            text="View All Products"
+            classname="w-[200px] h-[46px] bg-[#DB4444] text-white rounded-[4px] "
+          />
         </div>
       </div>
     </>
